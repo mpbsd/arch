@@ -1,7 +1,7 @@
 My Arch Linux Installation
 ==========================
 
-As stated by the project's website, [Arch Linux][] is a lightweight and flexible
+As stated on the project's website [Arch Linux][] is a lightweight and flexible
 Linux distribution that tries to Keep it Simple.
 
 Download the ISO
@@ -39,6 +39,7 @@ Connect to my WiFi network using `iwctl` like this
 # iwctl
 [iwctl]# station wlan0 connect <SSID>
 password:
+exit
 ```
 ```shell
 # reflector --country Brazil --age 12 --sort rate --save /etc/pacman.d/mirrorlist
@@ -56,10 +57,10 @@ password:
 # gdisk /dev/nvme0n1
 ```
 
-| Partition      | Type       | Code | Size        |
-| :------------- | :--------- | :--- | :---------- |
-| /dev/nvme0n1p1 | EFI System | ef00 | 2G          |
-| /dev/nvme0n1p2 | Linux LVM  | 8e00 | `remainder` |
+| Partition      | Type       | Code | Size                    |
+| :------------- | :--------- | :--- | :---------------------- |
+| /dev/nvme0n1p1 | EFI System | ef00 | 2G                      |
+| /dev/nvme0n1p2 | Linux LVM  | 8e00 | `remainder of the disk` |
 
 ```shell
 # lsblk
@@ -119,8 +120,8 @@ retyping.
 # blkid (copy the /dev/nvme0n1p2 uuid code)
 # vi /etc/default/grub (GRUB_CMDLINE_LINUX=cryptdevice=UUID=<block device uuid>:crypticarch root=/dev/crypticarchvg/root
 # grub-mkconfig -o /boot/grub/grub.cfg
-# useradd -m -G wheel `archie`
-# passwd `archie`
+# useradd -m -G wheel archie
+# passwd archie
 # EDITOR=vi visudo
 # systemctl enable NetworkManager
 # exit
