@@ -1,23 +1,28 @@
-My Arch Linux Installation
-==========================
+How I Installed Arch on My Personal Laptop
+==========================================
 
-As stated on the project's website [Arch Linux][] is a lightweight and flexible
-Linux distribution that tries to Keep it Simple.
+I maintain these notes as a reminder to myself in case I need to reinstall Arch.
+Here I install Arch as the sole operating system on my machine with full disk
+encryption (LVM on LUKS).
 
-Download the ISO
-----------------
-
-```shell
-$ wget
-```
-
-Burn the ISO to a USB with dd
------------------------------
-
-```shell
-$ sudo dd if=archlinux.iso of=/dev/sda
-```
-
+1. Downloading the ISO:
+    ```shell
+    $ wget http://br.mirror.archlinux-br.org/iso/2022.02.01/archlinux-2022.02.01-x86_64.iso
+    $ wget http://br.mirror.archlinux-br.org/iso/2022.02.01/archlinux-2022.02.01-x86_64.iso.sig
+    $ wget http://br.mirror.archlinux-br.org/iso/2022.02.01/sha1sums.txt
+    ```
+2. Verify the integrity of the downloaded ISO image:
+    ```shell
+    $ sha1sum -c --ignore-missing sha1sum.txt
+    ```
+3. Verify the signature of the ISO image:
+    ```shell
+    $ gpg --keyserver-options auto-key-retrieve --verify archlinux-2022.02.01.iso.sig
+    ```
+4. Burn the ISO into a USB stick using dd:
+    ```shell
+    $ sudo dd if=archlinux.iso of=/dev/**sdx** bs=4M conv=fsync oflag=direct status=progress
+    ```
 Installation
 ------------
 
@@ -141,5 +146,6 @@ $ sudo pacman -S firefox gvim ranger libreoffice-still
 ```
 
 [Arch Linux]: https://archlinux.org
+[Keep it Simple]: https://en.wikipedia.org/wiki/KISS_principle
 [Wiki]: https://wiki.archlinux.org
 [Download]: https://archlinux.org/download
