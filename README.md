@@ -250,8 +250,12 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     # pacman -S grub efibootmgr
     ```
 
+    `MODULES=(i915)`
+
+    `HOOKS=(base udev autodetect modconf block encrypt lvm2 filesystems keyboard fsck)`
+
     ```shell
-    # vi /etc/mkinitcpio.conf (HOOKS=(... encrypt lvm2 ...))
+    # vi /etc/mkinitcpio.conf 
     ```
 
     ```shell
@@ -264,45 +268,50 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
 
     Get the `UUID` of the `/dev/nvme0n1p2` partition:
 
+    `GRUB_CMDLINE_LINUX="cryptdevice=UUID=ba3f84d6-18aa-4150-a5fc-b42e8afaffc6:crypticarch root=/dev/crypticarchvg/root"`
+
     ```shell
     # blkid 
     ```
-
-    Add
-
-    > GRUB_CMDLINE_LINUX="cryptdevice=UUID=</dev/nvme0n1p2 UUID>:crypticarch root=/dev/crypticarchvg/root"
-
-    to `/etc/default/grub`:
 
     ```shell
     # vi /etc/default/grub
     ```
 
+    Finally, generate grub's config file:
+
     ```shell
     # grub-mkconfig -o /boot/grub/grub.cfg
     ```
 
-33. Choose a root password for the root user:
+33. Choose a password for the root user:
 
     ```shell
     # passwd
     ```
-```shell
-# useradd -m -G wheel archie
-# passwd archie
-# EDITOR=vi visudo
-```
 
-```shell
-# pacman -S networkmanager polkit
-# systemctl enable NetworkManager
-```
+34. Create a new user with sudo privileges:
 
-```shell
-# exit
-# umount -R /mnt
-# reboot
-```
+    ```shell
+    # useradd -m -G wheel archie
+    # passwd archie
+    # EDITOR=vi visudo
+    ```
+
+35. Manage network connections with NetworkManager:
+
+    ```shell
+    # pacman -S networkmanager polkit
+    # systemctl enable NetworkManager
+    ```
+
+36. Reboot to the newly installed system:
+
+    ```shell
+    # exit
+    # umount -R /mnt
+    # reboot
+    ```
 
 Install Some Packages
 ---------------------
@@ -310,7 +319,15 @@ Install Some Packages
 ```shell
 $ sudo pacman -Syu
 $ sudo pacman -S xorg xord-xdm
-$ sudo pacman -S i3 dmenu rxvt-unicode terminus-font tmux 
-$ sudo pacman -S xdg-utils xdg-user-dirs arc-gtk-theme papirus-icon-theme
-$ sudo pacman -S firefox gvim ranger libreoffice-still
+$ sudo pacman -S spectrwm scrot xlockmore
+$ sudo pacman -S alacritty tmux 
+$ sudo pacman -S ttf-inconsolata
+$ sudo pacman -S firefox
+$ sudo pacman -S pass pass-otp
+$ sudo pacman -S keychain
+$ sudo pacman -S gvim
+$ sudo pacman -S ranger
+$ sudo pacman -S libreoffice-still
+$ sudo pacman -S xdg-utils xdg-user-dirs
+$ sudo pacman -S arc-gtk-theme papirus-icon-theme
 ```
