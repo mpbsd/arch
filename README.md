@@ -197,29 +197,108 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     ```shell
     # genfstab -U /mnt >> /mnt/etc/fstab
     ```
+    
+    Make sure everything is in place:
 
-# cat /mnt/etc/fstab
-# arch-chroot /mnt
-# ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
-# hwclock --systohc
-# vi /etc/locale.gen (en_US.UTF-8 UTF-8)
-# locale-gen
-# vi/etc/locale.conf (LANG=en_US.UTF-8)
-# vi /etc/hostname (arch)
-# vi /etc/hosts (127.0.0.1 hostname...)
-# passwd
-# pacman -S grub efibootmgr
-# vi /etc/mkinitcpio.conf (HOOKS=(... encrypt lvm2 ...))
-# mkinitcpio -p linux-lts
-# grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
-# blkid (copy the /dev/nvme0n1p2 uuid code)
-# vi /etc/default/grub (GRUB_CMDLINE_LINUX=cryptdevice=UUID=<block device uuid>:crypticarch root=/dev/crypticarchvg/root
-# grub-mkconfig -o /boot/grub/grub.cfg
+    ```shell
+    # cat /mnt/etc/fstab
+    ```
+
+29. Change root:
+
+    ```shell
+    # arch-chroot /mnt
+    ```
+
+30. Select the machine's time zone and set the hardware's clock:
+
+    ```shell
+    # ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+    # hwclock --systohc
+    ```
+
+31. Localization:
+
+    Uncomment that one line of `/etc/locale.conf` containing `en_US.UTF-8 UTF-8`:
+
+    ```shell
+    # vi /etc/locale.gen 
+    # locale-gen
+    ```
+
+    Set the `LANG` variable by adding `LANG=en_US.UTF-8` to `/etc/locale.conf`:
+
+    ```shell
+    # vi /etc/locale.conf 
+    ```
+
+32. Network configuration:
+
+    Set the machine's hostname:
+
+    ```shell
+    # vi /etc/hostname
+    ```
+
+    ```shell
+    # vi /etc/hosts
+    ```
+
+33. Install and configure a boot loader (I mean, grub):
+
+    ```shell
+    # pacman -S grub efibootmgr
+    ```
+
+    ```shell
+    # vi /etc/mkinitcpio.conf (HOOKS=(... encrypt lvm2 ...))
+    ```
+
+    ```shell
+    # mkinitcpio -p linux-lts
+    ```
+
+    ```shell
+    # grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+    ```
+
+    Get the `UUID` of the `/dev/nvme0n1p2` partition:
+
+    ```shell
+    # blkid 
+    ```
+
+    Add
+
+    > GRUB_CMDLINE_LINUX="cryptdevice=UUID=</dev/nvme0n1p2 UUID>:crypticarch root=/dev/crypticarchvg/root"
+
+    to `/etc/default/grub`:
+
+    ```shell
+    # vi /etc/default/grub
+    ```
+
+    ```shell
+    # grub-mkconfig -o /boot/grub/grub.cfg
+    ```
+
+33. Choose a root password for the root user:
+
+    ```shell
+    # passwd
+    ```
+```shell
 # useradd -m -G wheel archie
 # passwd archie
 # EDITOR=vi visudo
+```
+
+```shell
 # pacman -S networkmanager polkit
 # systemctl enable NetworkManager
+```
+
+```shell
 # exit
 # umount -R /mnt
 # reboot
