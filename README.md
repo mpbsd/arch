@@ -1,5 +1,5 @@
-How I Installed Arch on My Personal Laptop
-==========================================
+How I installed Arch Linux on my laptop
+=======================================
 
 I maintain these notes as a reminder to myself in case I need to reinstall Arch.
 
@@ -8,7 +8,7 @@ encryption (LVM on LUKS).
 
 Turn `secure boot` off in the machine BIOS in case you haven't already.
 
-1. Downloading the ISO:
+1. Download the ISO:
 
     ```shell
     $ wget http://br.mirror.archlinux-br.org/iso/2022.02.01/archlinux-2022.02.01-x86_64.iso
@@ -36,21 +36,21 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
 
 5. Reboot the machine and enter the installer.
 
-6. Adjust the family and size of the terminal fonts to your liking:
+6. Adjust the the terminal fonts:
 
     ```shell
     # fontset ter-u28n
     ```
 
-7. Adjust the layout of the keyboard with the `loadkeys` command.
+7. Adjust the keyboard layout with the `loadkeys` command.
 
-8. Take a look at your network interfaces:
+8. Take a look at network interfaces:
 
     ```shell
     # ip -c a
     ```
 
-9. Connect to your network using `iwctl` (I don't have a wired connection just yet):
+9. Connect to wireless network:
 
     ```shell
     # iwctl
@@ -61,19 +61,19 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     > exit
     ```
 
-10. Test your connection:
+10. Test the connection:
 
     ```shell
     # ping -c 3 archlinux.org
     ```
 
-11. Update system's clock:
+11. Update the system's clock:
 
     ```shell
     timedatectl set-ntp true
     ```
 
-12. Take a look at your disks:
+12. Take a look at the disks:
 
     ```shell
     # lsblk
@@ -98,7 +98,7 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     | /dev/nvme0n1p1 | EFI System | ef00 | 1G                         |
     | /dev/nvme0n1p2 | Linux LVM  | 8e00 | `whatever is left on disk` |
 
-15. Take another look at your disks:
+15. Take another look at the disks:
 
     ```shell
     # lsblk
@@ -110,8 +110,7 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     # dd if=/dev/zero of=/dev/nvme0n1p1 bs=1M count=1024
     ```
 
-    This one is for paranoiac minds out there and could take quite a while
-    depending on your hardware.
+    The following one could take a while to complete:
 
     ```shell
     # dd if=/dev/urandom of=/dev/nvme0n1p2
@@ -149,13 +148,13 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     # lvcreate -l 100%FREE home crypticarchvg
     ```
 
-22. It's probably a good idea to have yet another look at your disks at this moment:
+22. It's probably a good idea to have yet another look at the disks at this moment:
 
     ```shell
     # lsblk
     ```
 
-23. Format your recently created partitions:
+23. Format those recently created partitions:
 
     ```shell
     # mkfs.vfat /dev/nvme0n1p1
@@ -198,7 +197,7 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     # genfstab -U /mnt >> /mnt/etc/fstab
     ```
     
-    Make sure everything is in place:
+    Make sure everything is in the right place:
 
     ```shell
     # cat /mnt/etc/fstab
@@ -210,10 +209,15 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     # arch-chroot /mnt
     ```
 
-30. Select the machine's time zone and set the hardware's clock:
+30. Select the time zone for the machine:
 
     ```shell
     # ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+    ```
+
+31. Set the hardware's clock:
+
+    ```shell
     # hwclock --systohc
     ```
 
@@ -244,7 +248,7 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     # vi /etc/hosts
     ```
 
-33. Install and configure a boot loader (I mean, grub):
+33. Install and configure the grub boot loader:
 
     ```shell
     # pacman -S grub efibootmgr
@@ -268,11 +272,14 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
 
     Get the `UUID` of the `/dev/nvme0n1p2` partition:
 
-    `GRUB_CMDLINE_LINUX="cryptdevice=UUID=ba3f84d6-18aa-4150-a5fc-b42e8afaffc6:crypticarch root=/dev/crypticarchvg/root"`
-
     ```shell
-    # blkid 
+    $ blkid /dev/nvme0n1p2
     ```
+
+    In this example, let's assume it's ba3f84e7-18ba-4147-a5fd-b42p8agarfs7. So,
+    add the following line to `/etc/default/grub`:
+
+    `GRUB_CMDLINE_LINUX="cryptdevice=UUID=ba3f84e7-18ba-4147-a5fd-b42p8agarfs7:crypticarch root=/dev/crypticarchvg/root"`
 
     ```shell
     # vi /etc/default/grub
@@ -290,7 +297,7 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     # passwd
     ```
 
-34. Create a new user with sudo privileges:
+34. Create a new user and give it sudo privileges:
 
     ```shell
     # useradd -m -G wheel archie
@@ -305,7 +312,7 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     # systemctl enable NetworkManager
     ```
 
-36. Reboot to the newly installed system:
+36. Exit the chrooted environment, unmount file systems and reboot the machine:
 
     ```shell
     # exit
@@ -320,13 +327,12 @@ Install Some Packages
 $ sudo pacman -Syu
 $ sudo pacman -S xorg xord-xdm
 $ sudo pacman -S spectrwm scrot xlockmore
-$ sudo pacman -S alacritty tmux 
-$ sudo pacman -S ttf-inconsolata
+$ sudo pacman -S alacritty ttf-inconsolata tmux
 $ sudo pacman -S firefox
-$ sudo pacman -S pass pass-otp
-$ sudo pacman -S keychain
 $ sudo pacman -S gvim
+$ sudo pacman -S keychain pass pass-otp
 $ sudo pacman -S ranger
+$ sudo pacman -S aspell-en aspell-pt
 $ sudo pacman -S libreoffice-still
 $ sudo pacman -S xdg-utils xdg-user-dirs
 $ sudo pacman -S arc-gtk-theme papirus-icon-theme
