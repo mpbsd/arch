@@ -55,7 +55,6 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     ```shell
     # iwctl
     > station wlan0 get-networks
-    ...
     > station wlan0 connect <SSID>
     password:
     > exit
@@ -179,13 +178,13 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     # lsblk
     ```
 
-26. Select the mirrors:
+26. Select mirrors for pacman:
 
     ```shell
     # reflector --country Brazil --age 12 --sort rate --save /etc/pacman.d/mirrorlist
     ```
 
-27. Install the basic system:
+27. Install the base system:
 
     ```shell
     # pacstrap /mnt base base-devel linux-lts linux-lts-headers linux-firmware intel-ucode lvm2 vi
@@ -221,7 +220,7 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     # hwclock --systohc
     ```
 
-31. Localization:
+32. Localization:
 
     Uncomment that one line of `/etc/locale.conf` containing `en_US.UTF-8 UTF-8`:
 
@@ -236,7 +235,7 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     # vi /etc/locale.conf 
     ```
 
-32. Network configuration:
+33. Network configuration:
 
     Set the machine's hostname:
 
@@ -248,7 +247,7 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     # vi /etc/hosts
     ```
 
-33. Install and configure the grub boot loader:
+34. Install and configure the grub boot loader:
 
     ```shell
     # pacman -S grub efibootmgr
@@ -276,8 +275,8 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     $ blkid /dev/nvme0n1p2
     ```
 
-    In this example, let's assume it's ba3f84e7-18ba-4147-a5fd-b42p8agarfs7. So,
-    add the following line to `/etc/default/grub`:
+    In this example, let's assume it's `ba3f84e7-18ba-4147-a5fd-b42p8agarfs7`.
+    So, add the following line to `/etc/default/grub`:
 
     `GRUB_CMDLINE_LINUX="cryptdevice=UUID=ba3f84e7-18ba-4147-a5fd-b42p8agarfs7:crypticarch root=/dev/crypticarchvg/root"`
 
@@ -291,13 +290,13 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     # grub-mkconfig -o /boot/grub/grub.cfg
     ```
 
-33. Choose a password for the root user:
+34. Choose a password for the root user:
 
     ```shell
     # passwd
     ```
 
-34. Create a new user and give it sudo privileges:
+35. Create a new user and give it sudo privileges:
 
     ```shell
     # useradd -m -G wheel archie
@@ -305,14 +304,14 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     # EDITOR=vi visudo
     ```
 
-35. Manage network connections with NetworkManager:
+36. Manage network connections with NetworkManager:
 
     ```shell
     # pacman -S networkmanager polkit
     # systemctl enable NetworkManager
     ```
 
-36. Exit the chrooted environment, unmount file systems and reboot the machine:
+37. Exit the chrooted environment, unmount file systems and reboot the machine:
 
     ```shell
     # exit
