@@ -56,7 +56,7 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     # iwctl
     > station wlan0 get-networks
     > station wlan0 connect <SSID>
-    password:
+    passphrase:
     > exit
     ```
 
@@ -130,7 +130,7 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
 19. Create the physical volume:
 
     ```shell
-    # pvcreate /dev/mapper/cypticarch
+    # pvcreate /dev/mapper/crypticarch
     ```
 
 20. Create the volume group:
@@ -144,7 +144,7 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     ```shell
     # lvcreate -L 64G -n root crypticarchvg
     # lvcreate -L 4G -n swap crypticarchvg
-    # lvcreate -l 100%FREE home crypticarchvg
+    # lvcreate -l 100%FREE -n home crypticarchvg
     ```
 
 22. It's probably a good idea to have yet another look at the disks at this moment:
@@ -237,14 +237,27 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
 
 33. Network configuration:
 
-    Set the machine's hostname:
+    Create the file `/etc/hostname` with:
 
     ```shell
     # vi /etc/hostname
     ```
 
+    and give your machine a meaningful and descriptive name like, for example,
+    `arch` ;)
+
+    Create the file `/etc/hosts` with:
+
     ```shell
     # vi /etc/hosts
+    ```
+
+    and populate it with something like this:
+
+    ```shell
+    127.0.0.1   localhost
+    ::1         localhost
+    127.0.1.1   arch.localdomain  arch
     ```
 
 34. Install and configure the grub boot loader:
@@ -275,10 +288,10 @@ Turn `secure boot` off in the machine BIOS in case you haven't already.
     $ blkid /dev/nvme0n1p2
     ```
 
-    In this example, let's assume it's `ba3f84e7-18ba-4147-a5fd-b42p8agarfs7`.
+    In this example let's say it is `ba3f84e7-18ba-4147-a5fd`.
     So, add the following line to `/etc/default/grub`:
 
-    `GRUB_CMDLINE_LINUX="cryptdevice=UUID=ba3f84e7-18ba-4147-a5fd-b42p8agarfs7:crypticarch root=/dev/crypticarchvg/root"`
+    `GRUB_CMDLINE_LINUX="cryptdevice=UUID=ba3f84e7-18ba-4147-a5fd:crypticarch root=/dev/crypticarchvg/root"`
 
     ```shell
     # vi /etc/default/grub
@@ -324,7 +337,7 @@ Install Some Packages
 
 ```shell
 $ sudo pacman -Syu
-$ sudo pacman -S xorg xord-xdm
+$ sudo pacman -S xorg xorg-xdm
 $ sudo pacman -S spectrwm scrot xlockmore
 $ sudo pacman -S alacritty ttf-inconsolata tmux
 $ sudo pacman -S firefox
@@ -332,7 +345,8 @@ $ sudo pacman -S gvim
 $ sudo pacman -S keychain pass pass-otp
 $ sudo pacman -S ranger
 $ sudo pacman -S aspell-en aspell-pt
+$ sudo pacman -S pandoc
 $ sudo pacman -S libreoffice-still
 $ sudo pacman -S xdg-utils xdg-user-dirs
-$ sudo pacman -S arc-gtk-theme papirus-icon-theme
+$ sudo pacman -S arc-gtk-theme arc-icon-theme
 ```
