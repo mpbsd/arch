@@ -1,5 +1,5 @@
-Install GNU/Linux on bare metal with full disk encryption
-=========================================================
+Install Arch Linux on bare metal with full disk encryption
+==========================================================
 
 About
 -----
@@ -14,7 +14,7 @@ About
 
 This is a walk-through of the installation process of Arch Linux on bare metal
 with full disk encryption (LVM on LUKS). It's assumed that Arch will be the
-only OS of the target machine (what else would need, huh?).
+only OS on the target machine (what else would need, huh?).
 
 Disclaimer
 ----------
@@ -50,18 +50,21 @@ STEPS
 4. Burn the ISO into a USB stick (be careful with this one):
 
     ```shell
-    $ sudo dd if=archlinux.iso of=/dev/sdx bs=4M conv=fsync oflag=direct status=progress
+    $ sudo dd if=archlinux.iso of=/dev/sdX bs=4M conv=fsync oflag=direct status=progress
     ```
 
 5. Reboot the machine and enter the installer.
 
-6. Adjust the terminal fonts:
+6. This step is optional. Arch is intended to be installed from the command
+   line. So, maybe it's a good idea to adjust the terminal fonts to be easier
+   on your eyes:
 
     ```shell
     # fontset ter-u28n
     ```
 
-7. Adjust the keyboard layout with the `loadkeys` command.
+7. Again, an option step. Adjust the keyboard layout with the help of the
+   `loadkeys` command.
 
 8. Take a look at network interfaces:
 
@@ -205,9 +208,18 @@ STEPS
 
 27. Install the base system:
 
+    In case your machine features a 64-bit processor from Intel, then:
+
     ```shell
     # pacstrap /mnt base base-devel linux-lts linux-lts-headers linux-firmware intel-ucode lvm2 vi
     ```
+    Or else, if it has a 64-bit processor from AMD, then:
+
+    ```shell
+    # pacstrap /mnt base base-devel linux-lts linux-lts-headers linux-firmware amd-ucode lvm2 vi
+    ```
+    Or else, if it has a 64-bit processor from AMD, then:
+
 
 28. Generate an fstab with `UUID`'s:
 
@@ -279,19 +291,30 @@ STEPS
     127.0.1.1   arch.localdomain  arch
     ```
 
-34. Install and configure the grub boot loader:
+34. Install grub:
 
     ```shell
     # pacman -S grub efibootmgr
     ```
 
-    `MODULES=(i915)`
-
-    `HOOKS=(base udev autodetect modconf block encrypt lvm2 filesystems keyboard fsck)`
+35. Configure:
 
     ```shell
     # vi /etc/mkinitcpio.conf 
     ```
+
+    If your machine has a 64-bit CPU from Intel, then:
+
+    `MODULES=(i915)`
+
+    Or else, if it is a 64-bit CPU from AMD, then make it like this:
+
+    `MODULES=(amdgpu)`
+
+    The rest of the configuration should be the same for both Intel and AMD
+    CPUs.
+
+    `HOOKS=(base udev autodetect modconf block encrypt lvm2 filesystems keyboard fsck)`
 
     ```shell
     # mkinitcpio -p linux-lts
